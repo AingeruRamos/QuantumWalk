@@ -110,7 +110,8 @@ def get_2Vector_constraint(v1, v2, b, scalar=1):
   for i in range(len(v1)):
     c_val = scalar*v1[i]*v2[i].conjugate()
     equ += abs(c_val.real)+abs(c_val.imag) # ESTO NO TIENE PUTO SENTIDO. ESTOY PROBANDO
-  return 
+    #equ += c_val
+  return equ
 
 #==================================================================#
 
@@ -208,7 +209,7 @@ bnds = (2*circuit_statespace_size*circuit_statespace_size) * [(-1.0, 1.0)]
 cons = get_unitary_constraints(circuit_statespace_size)
 
 res = minimize(objective, x0, method='SLSQP', bounds=bnds, constraints=cons, tol=1e-6)
-#print(res)
+print(res)
 exit()
 
 M_real = res.x[0:circuit_statespace_size*circuit_statespace_size]
