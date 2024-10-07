@@ -106,12 +106,12 @@ def get_complex_vector(v_real, v_imag):
 def get_2Vector_constraint(v1, v2, b, scalar=1):
   assert len(v1) == len(v2)
 
-  equ = -b
+  c_val = 0+0j
   for i in range(len(v1)):
-    c_val = scalar*v1[i]*v2[i].conjugate()
-    equ += abs(c_val.real)+abs(c_val.imag) # ESTO NO TIENE PUTO SENTIDO. ESTOY PROBANDO
-    #equ += c_val
-  return equ
+    c_val += scalar*v1[i]*v2[i].conjugate()
+  
+  # Bastante fumada
+  return (abs(c_val.real) - b) + abs(c_val.imag)
 
 #==================================================================#
 
@@ -131,7 +131,7 @@ def get_unitary_constraints(m_size):
   for i in range(m_size):
     for j in range(m_size):
       constraints.append(
-        {'type': 'eq', 'fun': constraint_f_factory(i, j)}
+        {'type': 'ineq', 'fun': constraint_f_factory(i, j)}
       )
   return constraints
 
@@ -210,10 +210,9 @@ cons = get_unitary_constraints(circuit_statespace_size)
 
 res = minimize(objective, x0, method='SLSQP', bounds=bnds, constraints=cons, tol=1e-6)
 print(res)
-exit()
 
 M_real = res.x[0:circuit_statespace_size*circuit_statespace_size]
-M_imAg = res.x[circuit_statespace_size*circuit_statespace_size:]
+M_imag = res.x[circuit_statespace_size*circuit_statespace_size:]
 M = get_complex_vector(M_real, M_imag)
 M = M.reshape((circuit_statespace_size, circuit_statespace_size))
 
